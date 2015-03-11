@@ -1,7 +1,13 @@
+-- Michał Woś
+-- Big data processing course, 2015
+-- University of Warsaw
+
 %default input '../input2'
 %default shingle_size 3
-%default hash_functions_number 5
-
+-- hash_functions_number == signature size
+%default hash_functions_number 8
+-- band_size should divide hash_functions_number 
+%default band_size 2
 
 register 'shingling/target/shingling-1.0-SNAPSHOT.jar'
 register 'minhashing/target/minhashing-1.0-SNAPSHOT.jar'
@@ -10,6 +16,7 @@ register 'lsh/target/lsh-1.0-SNAPSHOT.jar'
 define dataBagStringConcate DataBagStringConcate();
 define shingle Shingler('$shingle_size');
 define minhashing Minhashing('$hash_functions_number');
+define bands BandCreator('$band_size');
 
 set pig.splitCombination false;
 
@@ -17,7 +24,7 @@ set pig.splitCombination false;
 -- Prepare data
 -------------------------------------------------------------------------------------------------
 A = LOAD '$input' USING PigStorage('\t', '-tagFile') AS (docname:chararray, doctext:chararray);
--- we didn't serialize documents, so now each paragraph is separated to row
+-- we didn't serialize documents (one file = one doc), so now paragraphs are separated by EOL to rows
 -- we want to concatenate paragraphs from same documents
 B = GROUP A BY docname;
 C = FOREACH B GENERATE group AS docname, FLATTEN(dataBagStringConcate(A.doctext)) AS doctext;
@@ -52,15 +59,16 @@ J = FOREACH I generate group as docname, H.shingle_id as shingle_ids;
 -- MinHashing
 -------------------------------------------------------------------------------------------------
 -- add info about total shingles number to each row 
--- using dummy value such as 1 we use JOIN as well performed CROSS
--- we use 'replicated' to keep SHINGLE_SUM_NUM in memory (there is one row with total number of shingle)
+-- by using dummy value such as 1 we use JOIN as well performed CROSS
+-- we use 'replicated' to keep SHINGLE_SUM_NUM (which has 1 row) in memory to preserve nice performance
 K = JOIN J by 1, SHINGLE_SUM_NUM by 1 USING 'replicated'; 
-L = FOREACH K GENERATE docname as docname, minhashing(shingle_ids, shingle_total_num) as signature;
-DUMP L;
+L = FOREACH K GENERATE docname as docname, minhashing(shingle_ids, shingle_total_num) as doc_signature;
 
 -------------------------------------------------------------------------------------------------
 -- LSH
 -------------------------------------------------------------------------------------------------
-
+M = FOREACH L GENERATE docname as docname, FLATTEN(bands(doc_signature)) as (band_level, band_signature);
+DUMP M;
+--N = GROUP M by band_id;
 
 
