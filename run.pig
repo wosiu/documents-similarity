@@ -2,7 +2,7 @@
 -- Big data processing course, 2015
 -- University of Warsaw
 
-%default input '../input'
+%default input 'sample_input'
 %default shingle_size 3
 -- hash_functions_number == signature size
 %default hash_functions_number 100

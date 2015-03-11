@@ -1,0 +1,7 @@
+skrypt do 1 oraz archiwum zip z projektem eclipse lub netbeans do 2, w mailu podaj instrukcje kompilacji i uruchamiania
+Znajdywanie podobnych zbiorów (o hashowaniu)
+napisz w Javie program znajdujący podobne dokumenty przy pomocy Shingling, Minhashing i Local-Sensitive Hashing
+program ma składać się z trzech podprogramów, które przekazują dane między sobą przez pliki; zakładamy że macierze są żadkie i tak je reprezentujemy
+razem z rozwiązaniem prześli informację jak sparametryzować program i przykładowe pliki wejściowe oraz skrypt odpalający program z przykładowymi parametrami (3-shingle, 100 el. sygnatury, podział na 20 band po 5 elementów) i na przykładowych plikach
+MapReduce, algebra relacji
+PageRank
