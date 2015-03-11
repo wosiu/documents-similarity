@@ -23,7 +23,12 @@ public class BandCreator extends EvalFunc<DataBag> {
 		this.bandSize = Integer.valueOf(bandSize);
 	}
 
+
 	public List<Band> create(List<Long> docSignature) {
+		return create(docSignature, null);
+	}
+
+	public List<Band> create(List<Long> docSignature, String docname) {
 		List<Band> bands = new ArrayList<Band>();
 		List<Long>bandSignature = new ArrayList<Long>(bandSize);
 		int bandLevel = 0;
@@ -32,7 +37,7 @@ public class BandCreator extends EvalFunc<DataBag> {
 			i++;
 			bandSignature.add(s);
 			if ( i % bandSize == 0 ) {
-				bands.add(new Band(bandLevel, bandSignature));
+				bands.add(new Band(bandLevel, bandSignature, docname));
 				bandSignature = new ArrayList<Long>(bandSize);
 				bandLevel++;
 			}

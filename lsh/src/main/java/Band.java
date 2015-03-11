@@ -9,14 +9,10 @@ import java.util.List;
  * Created by m on 11.03.15.
  */
 public class Band {
-	public Band(int bandLevel, List<Long> bandSignature) {
+	public Band(int bandLevel, List<Long> bandSignature, String docName) {
 		this.bandLevel = bandLevel;
 		this.signature = bandSignature;
-	}
-
-	public Band(String docName, List<Long> bandSignature) {
 		this.docName = docName;
-		this.signature = bandSignature;
 	}
 
 	public List<Long> getSignature() {
