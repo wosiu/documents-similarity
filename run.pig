@@ -2,7 +2,7 @@
 -- Big data processing course, 2015
 -- University of Warsaw
 
-%default input '../input2'
+%default input '../input'
 %default shingle_size 3
 -- hash_functions_number == signature size
 %default hash_functions_number 8
@@ -11,7 +11,7 @@
 
 register 'shingling/target/shingling-1.0-SNAPSHOT.jar'
 register 'minhashing/target/minhashing-1.0-SNAPSHOT.jar'
-register 'lsh/target/lsh-1.0-SNAPSHOT-jar-with-dependencies.jar'
+register 'lsh/target/lsh-1.0-SNAPSHOT.jar'
 
 define dataBagStringConcate DataBagStringConcate();
 define shingle Shingler('$shingle_size');
@@ -72,7 +72,7 @@ M = FOREACH L GENERATE docname as docname, FLATTEN(createBands(doc_signature)) a
 O = GROUP M by (band_level, band_signature);
 BUCKETS = FOREACH O GENERATE M.docname as bucket;
 BUCKETS = DISTINCT BUCKETS;
-BUCKETS = FILTER BUCKETS by (SIZE(bucket) > 1);
-DOC_PAIRS = FOREACH BUCKETS GENERATE createPairs(bucket);
+DOC_PAIRS = FOREACH BUCKETS GENERATE FLATTEN(createPairs(bucket));
+DOC_PAIRS = DISTINCT DOC_PAIRS;
 DUMP DOC_PAIRS;
 
