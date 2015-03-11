@@ -16,7 +16,8 @@ register 'lsh/target/lsh-1.0-SNAPSHOT.jar'
 define dataBagStringConcate DataBagStringConcate();
 define shingle Shingler('$shingle_size');
 define minhashing Minhashing('$hash_functions_number');
-define bands BandCreator('$band_size');
+define createBands BandCreator('$band_size');
+define splitIntoBuckets BucketsCreator();
 
 set pig.splitCombination false;
 
@@ -67,8 +68,18 @@ L = FOREACH K GENERATE docname as docname, minhashing(shingle_ids, shingle_total
 -------------------------------------------------------------------------------------------------
 -- LSH
 -------------------------------------------------------------------------------------------------
-M = FOREACH L GENERATE docname as docname, FLATTEN(bands(doc_signature)) as (band_level, band_signature);
-DUMP M;
---N = GROUP M by band_id;
+M = FOREACH L GENERATE docname as docname, FLATTEN(createBands(doc_signature)) as (band_signature, band_level);
+N = GROUP M by band_level;
+N = FOREACH N GENERATE group as band_level, M as bands;
+-- N: {band_level: bytearray,bandsDataBag: {(docname: chararray, band_signature: bytearray, band_level: bytearray)}}
+DUMP N;
+Z = FOREACH N GENERATE splitIntoBuckets(bands);
+DUMP Z;
 
+--O = FOREACH N GENERATE FLATTEN(splitIntoBuckets(bands)) as bucket;
+--DUMP O;
+
+-- split documents into buckets regarded band from same band_level
+-- create docname pairs for documents from same buckets
+--O = FOREACH N GENERATE band_level, FLATTEN(pairsToCheck(bands)) as pair;
 

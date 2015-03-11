@@ -14,6 +14,11 @@ public class Band {
 		this.signature = bandSignature;
 	}
 
+	public Band(String docName, List<Long> bandSignature) {
+		this.docName = docName;
+		this.signature = bandSignature;
+	}
+
 	public List<Long> getSignature() {
 		return signature;
 	}
@@ -34,6 +39,15 @@ public class Band {
 
 	private int bandLevel;
 
+	public String getDocName() {
+		return docName;
+	}
+
+	public void setDocName(String docName) {
+		this.docName = docName;
+	}
+
+	private String docName;
 
 	@Override
 	public boolean equals(Object o) {
@@ -55,7 +69,6 @@ public class Band {
 
 	public Tuple toPigStructure() {
 		Tuple result = TupleFactory.getInstance().newTuple();
-		result.append(bandLevel);
 		DataBag signatureDataBag = new DefaultDataBag();
 		for ( long s : signature ) {
 			Tuple t = TupleFactory.getInstance().newTuple();
@@ -63,6 +76,7 @@ public class Band {
 			signatureDataBag.add(t);
 		}
 		result.append(signatureDataBag);
+		result.append(bandLevel);
 		return result;
 	}
 }
