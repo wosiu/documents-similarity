@@ -70,6 +70,7 @@ SIGNATURES = FOREACH K GENERATE docname as docname, minhashing(shingle_ids, shin
 -- To see minhashing signature for each document, uncomment:
 -- DUMP SIGNATURES;
 
+
 -------------------------------------------------------------------------------------------------
 -- LSH
 -------------------------------------------------------------------------------------------------

@@ -10,6 +10,17 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>shingling</artifactId>
-
+	<!--build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.3.2</version>
+				<configuration>
+					<mainClass>NoMapReduceResolver</mainClass>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build-->
 
 </project>
