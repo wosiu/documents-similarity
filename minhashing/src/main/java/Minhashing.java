@@ -40,13 +40,13 @@ public class Minhashing extends EvalFunc<DataBag> {
 	 * @param mod - max index number in set of shingle sum
 	 * @return
 	 */
-	public List<Integer> createSignature(List<Integer> shingleIds, int mod) {
-		List<Integer> signature = new ArrayList<Integer>(hashFunctions.size());
+	public List<Long> createSignature(List<Long> shingleIds, long mod) {
+		List<Long> signature = new ArrayList<Long>(hashFunctions.size());
 
 		for (HashFunction hashFunction : hashFunctions) {
-			int minId = Integer.MAX_VALUE;
-			for (int id : shingleIds) {
-				int hashedId = hashFunction.hash(id) % mod + 1;
+			long minId = Long.MAX_VALUE;
+			for (long id : shingleIds) {
+				long hashedId = hashFunction.hash(id) % mod + 1;
 				minId = Math.min(minId, hashedId);
 			}
 			signature.add(minId);
@@ -56,37 +56,34 @@ public class Minhashing extends EvalFunc<DataBag> {
 
 	@Override
 	public DataBag exec(Tuple tuple) throws IOException {
-		System.out.println("WSZEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEDL");
 		if (tuple == null || tuple.size() != 2) {
 			return null;
 		}
-		System.out.println("TUUUUUUUUUUUUUUUTAAAAAAAAAAAAJJJJJJJJJJJJJJJJJJ");
-		System.out.println(tuple);
 		DataBag shingleIdsDataBag = (DataBag) tuple.get(0);
-		Long modL = (Long) tuple.get(1);
-		if (shingleIdsDataBag == null || modL == null) {
+		Long mod = (Long) tuple.get(1);
+		if (shingleIdsDataBag == null || mod == null) {
 			return null;
 		}
-		long mod2 = modL;
-		int mod = (int) mod2;
-		System.out.println(mod);
 
 		Iterator<Tuple> it = shingleIdsDataBag.iterator();
-		List<Integer> shingleIds = new ArrayList<Integer>((int) shingleIdsDataBag.size());
+		List<Long> shingleIds = new ArrayList<Long>((int) shingleIdsDataBag.size());
 
 		while (it.hasNext()) {
 			Tuple t = it.next();
 			if (t == null || t.size() != 1) {
 				continue;
 			}
-			int id = (Integer) t.get(0);
+			Long id = (Long) t.get(0);
+			if ( id == null ) {
+				continue;
+			}
 			shingleIds.add(id);
 		}
 
-		List<Integer> signature = createSignature(shingleIds, mod);
+		List<Long> signature = createSignature(shingleIds, mod);
 
 		DataBag result = new DefaultDataBag();
-		for (int element : signature) {
+		for (long element : signature) {
 			Tuple t = TupleFactory.getInstance().newTuple();
 			t.append(element);
 			result.add(t);

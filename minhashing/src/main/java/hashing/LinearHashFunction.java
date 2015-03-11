@@ -4,14 +4,14 @@ package hashing;
  * Created by m on 10.03.15.
  */
 public class LinearHashFunction implements HashFunction {
-	private int a, b;
+	private long a, b;
 
-	public LinearHashFunction(int a, int b) {
+	public LinearHashFunction(long a, long b) {
 		this.a = a;
 		this.b = b;
 	}
 	@Override
-	public int hash(int number) {
+	public long hash(long number) {
 		return a * number + b;
 	}
 }
