@@ -69,17 +69,11 @@ L = FOREACH K GENERATE docname as docname, minhashing(shingle_ids, shingle_total
 -- LSH
 -------------------------------------------------------------------------------------------------
 M = FOREACH L GENERATE docname as docname, FLATTEN(createBands(doc_signature)) as (band_signature, band_level);
-N = GROUP M by band_level;
-N = FOREACH N GENERATE group as band_level, M as bands;
+--N = GROUP M by band_level;
+--N = FOREACH N GENERATE group as band_level, M as bands;
 -- N: {band_level: bytearray,bandsDataBag: {(docname: chararray, band_signature: bytearray, band_level: bytearray)}}
-DUMP N;
-Z = FOREACH N GENERATE splitIntoBuckets(bands);
-DUMP Z;
-
---O = FOREACH N GENERATE FLATTEN(splitIntoBuckets(bands)) as bucket;
---DUMP O;
-
--- split documents into buckets regarded band from same band_level
--- create docname pairs for documents from same buckets
---O = FOREACH N GENERATE band_level, FLATTEN(pairsToCheck(bands)) as pair;
+O = GROUP M by (band_level, band_signature);
+BUCKETS = FOREACH O GENERATE M.docname as bucket;
+BUCKETS = DISTINCT BUCKETS;
+DUMP BUCKETS;
 
