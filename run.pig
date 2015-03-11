@@ -17,7 +17,6 @@ define dataBagStringConcate DataBagStringConcate();
 define shingle Shingler('$shingle_size');
 define minhashing Minhashing('$hash_functions_number');
 define createBands BandCreator('$band_size');
-define splitIntoBuckets BucketsCreator();
 
 set pig.splitCombination false;
 
@@ -69,9 +68,6 @@ L = FOREACH K GENERATE docname as docname, minhashing(shingle_ids, shingle_total
 -- LSH
 -------------------------------------------------------------------------------------------------
 M = FOREACH L GENERATE docname as docname, FLATTEN(createBands(doc_signature)) as (band_signature, band_level);
---N = GROUP M by band_level;
---N = FOREACH N GENERATE group as band_level, M as bands;
--- N: {band_level: bytearray,bandsDataBag: {(docname: chararray, band_signature: bytearray, band_level: bytearray)}}
 O = GROUP M by (band_level, band_signature);
 BUCKETS = FOREACH O GENERATE M.docname as bucket;
 BUCKETS = DISTINCT BUCKETS;
