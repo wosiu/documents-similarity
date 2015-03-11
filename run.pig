@@ -11,12 +11,13 @@
 
 register 'shingling/target/shingling-1.0-SNAPSHOT.jar'
 register 'minhashing/target/minhashing-1.0-SNAPSHOT.jar'
-register 'lsh/target/lsh-1.0-SNAPSHOT.jar'
+register 'lsh/target/lsh-1.0-SNAPSHOT-jar-with-dependencies.jar'
 
 define dataBagStringConcate DataBagStringConcate();
 define shingle Shingler('$shingle_size');
 define minhashing Minhashing('$hash_functions_number');
 define createBands BandCreator('$band_size');
+define createPairs PairsCreator();
 
 set pig.splitCombination false;
 
@@ -71,5 +72,7 @@ M = FOREACH L GENERATE docname as docname, FLATTEN(createBands(doc_signature)) a
 O = GROUP M by (band_level, band_signature);
 BUCKETS = FOREACH O GENERATE M.docname as bucket;
 BUCKETS = DISTINCT BUCKETS;
-DUMP BUCKETS;
+BUCKETS = FILTER BUCKETS by (SIZE(bucket) > 1);
+DOC_PAIRS = FOREACH BUCKETS GENERATE createPairs(bucket);
+DUMP DOC_PAIRS;
 
