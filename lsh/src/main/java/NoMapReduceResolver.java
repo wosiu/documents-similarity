@@ -1,12 +1,11 @@
 import org.apache.log4j.Logger;
+import org.apache.pig.data.Tuple;
+import org.apache.pig.data.TupleFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import pl.edu.mimuw.students.mw336071.commons.MinhashingOutput;
 
 import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by m on 11.03.15.
@@ -45,13 +44,26 @@ public class NoMapReduceResolver {
 
 		// CREATE BUCKETS FOR EACH BAND LEVEL
 		long bandLevels = docToBands.get(0).size();
+		assert(bandLevels > 0);
+		BucketsCreator bucketsCreator = new BucketsCreator();
+		PairsCreator pairsCreator = new PairsCreator();
+		Set<Tuple> docPairs = new HashSet<Tuple>();
+
 		for (int i = 0; i < bandLevels; i++) {
 			List<Band> levelBands = new ArrayList<Band>(docNumber);
 			for( List<Band> docBands : docToBands ) {
 				levelBands.add(docBands.get(i));
 			}
+			assert(!levelBands.isEmpty());
 			// create buckets
+			List<List<String>> docBuckets = bucketsCreator.createDocBuckets(levelBands);
+			assert(!docBuckets.isEmpty());
+			// create documents pair for each bucket
+			for ( List<String> docBucket : docBuckets ) {
+				List<Tuple> pairs = pairsCreator.create(docBucket);
+				docPairs.addAll(pairs);
+			}
 		}
+		System.out.println(docPairs);
 	}
-
 }

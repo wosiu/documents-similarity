@@ -15,6 +15,17 @@ public class Band {
 		this.docName = docName;
 	}
 
+	public Band(int bandLevel, List<Long> bandSignature) {
+		this.bandLevel = bandLevel;
+		this.signature = bandSignature;
+	}
+
+	public Band(String docName, List<Long> bandSignature) {
+		this.signature = bandSignature;
+		this.docName = docName;
+	}
+
+
 	public List<Long> getSignature() {
 		return signature;
 	}
@@ -74,5 +85,12 @@ public class Band {
 		result.append(signatureDataBag);
 		result.append(bandLevel);
 		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "Band{" +
+				"signature=" + signature +
+				'}';
 	}
 }

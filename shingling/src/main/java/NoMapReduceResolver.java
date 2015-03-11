@@ -26,8 +26,8 @@ public class NoMapReduceResolver {
 	}
 
 	public static void main(String[] args) throws Exception {
-		//String dirPath = "sample_input";
-		String dirPath = "../input2";
+		String dirPath = "sample_input";
+		//String dirPath = "../input2";
 		int shingleSize = 3;
 		String shingleResultFilePath = "shingle-output.json";
 		if ( args.length == 2 ) {

@@ -15,6 +15,20 @@ import java.util.List;
  */
 public class PairsCreator extends EvalFunc<DataBag> {
 
+	public List<Tuple> create(List<String> docNames) {
+		Collections.sort(docNames);
+		List<Tuple> result = new ArrayList<Tuple>();
+		for ( int i = 1; i < docNames.size(); i++ ) {
+			for ( int j = 0; j < i; j++ ) {
+				Tuple pair = TupleFactory.getInstance().newTuple();
+				pair.append(docNames.get(j));
+				pair.append(docNames.get(i));
+				result.add(pair);
+			}
+		}
+		return result;
+	}
+
 	public DataBag exec(Tuple input) throws IOException {
 		if (input == null || input.size() != 1) {
 			return null;
@@ -32,16 +46,7 @@ public class PairsCreator extends EvalFunc<DataBag> {
 			docNames.add(docName);
 		}
 
-		Collections.sort(docNames);
-		DataBag result = new DefaultDataBag();
-		for ( int i = 1; i < docNames.size(); i++ ) {
-			for ( int j = 0; j < i; j++ ) {
-				Tuple pair = TupleFactory.getInstance().newTuple();
-				pair.append(docNames.get(j));
-				pair.append(docNames.get(i));
-				result.add(pair);
-			}
-		}
+		DataBag result = new DefaultDataBag(create(docNames));
 		return result;
 	}
 }
