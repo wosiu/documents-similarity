@@ -1,12 +1,9 @@
-import com.google.common.base.Splitter;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.json.simple.JSONObject;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -14,7 +11,7 @@ import java.util.*;
  * 1. Read documents from local filesystem.
  * 2. Create shingle for each document.
  * 3. Take sum of shingle, map each unique shingle to id.
- * 4. Map documents shingle to out ids.
+ * 4. Map documents shingle to our ids.
  * 5. Store shingle ids to file.
  * <p/>
  * Created by m on 11.03.15.
@@ -76,22 +73,9 @@ public class NoMapReduceResolver {
 			fileNameToShingleIds.put(fileName, shingleIds);
 		}
 
-		// SERIALIZE RESULT
-		/*FileOutputStream fos = new FileOutputStream(shingleResultFilePath);
-		ObjectOutputStream oos = new ObjectOutputStream(fos);
-		oos.writeObject(sortedShinglesSum.size());
-		oos.writeObject(fileNameToShingleIds);
-		oos.close();
-		fos.close();*/
-		/*rintWriter writer = new PrintWriter(shingleResultFilePath, Charset.defaultCharset().name());
-		// store total number of shingles
-		writer.println(sortedShinglesSum.size());
-		writer.println(fileNameToShingleIds);
-		writer.close();*/
-
 		// STORE RESULTS
 		ShingleOutput shingleOutput = new ShingleOutput(sortedShinglesSum.size(), fileNameToShingleIds);
-		FileOutputStream fos = new FileOutputStream(shingleResultFilePath);	
+		FileOutputStream fos = new FileOutputStream(shingleResultFilePath);
 		new ObjectMapper().writeValue(fos, shingleOutput);
 	}
 }
