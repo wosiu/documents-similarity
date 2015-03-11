@@ -1,0 +1,17 @@
+1. budujemy projekt: mvn clean install
+
+2. Wymagany ściągnięty pig, np.:
+http://ftp.piotrkosoft.net/pub/mirrors/ftp.apache.org/pig/latest/
+
+3. w skrypcie run.pig ustawiamy ścieżkę do katalogu z dokumentami - każdy dokument w osobnym pliku. Parametr 'input'
+
+4. Odpalenie lokalnie (bez hdfs):
+sciezka_do_wypakowanego_piga/bin/pig -x local run.pig > results
+
+Wynik jest DUMPowany. Wystarczy przekierować stdout do pliku. W powyższym przykładzie wynik znajdzie sie w pliku 'results'.
+Są to pary dokumentów, które wg LSH powinny zostać sprawdzone (co najmniej po jednym bandzie wpadły do tego samego bucketa).
+
+5. Zmiana ustawień domyslnych UDFów (shingle, minhashing, lsh) w skrypcie run.pig na samej górze
+
+6. Aby wypisac produkty uboczne po kolejnych etapach (shingle, minhashing, lsh) wystarczy odkomentowac DUMP'y w skrypcie PIGowym 
+we wskazanych miejsach.

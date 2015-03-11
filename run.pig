@@ -5,9 +5,9 @@
 %default input '../input'
 %default shingle_size 3
 -- hash_functions_number == signature size
-%default hash_functions_number 8
+%default hash_functions_number 100
 -- band_size should divide hash_functions_number 
-%default band_size 2
+%default band_size 5
 
 register 'shingling/target/shingling-1.0-SNAPSHOT.jar'
 register 'minhashing/target/minhashing-1.0-SNAPSHOT.jar'
@@ -35,6 +35,9 @@ C = FOREACH B GENERATE group AS docname, FLATTEN(dataBagStringConcate(A.doctext)
 -- Shingle
 -------------------------------------------------------------------------------------------------
 D = FOREACH C GENERATE docname, shingle(doctext) AS docshingle;
+-- To see set of shingle for each document, uncomment:
+-- DUMP D;
+
 E = FOREACH D GENERATE docname, FLATTEN(docshingle) as shingle; 
 
 -- Prepare sum of shingle
@@ -63,12 +66,14 @@ J = FOREACH I generate group as docname, H.shingle_id as shingle_ids;
 -- by using dummy value such as 1 we use JOIN as well performed CROSS
 -- we use 'replicated' to keep SHINGLE_SUM_NUM (which has 1 row) in memory to preserve nice performance
 K = JOIN J by 1, SHINGLE_SUM_NUM by 1 USING 'replicated'; 
-L = FOREACH K GENERATE docname as docname, minhashing(shingle_ids, shingle_total_num) as doc_signature;
+SIGNATURES = FOREACH K GENERATE docname as docname, minhashing(shingle_ids, shingle_total_num) as doc_signature;
+-- To see minhashing signature for each document, uncomment:
+-- DUMP SIGNATURES;
 
 -------------------------------------------------------------------------------------------------
 -- LSH
 -------------------------------------------------------------------------------------------------
-M = FOREACH L GENERATE docname as docname, FLATTEN(createBands(doc_signature)) as (band_signature, band_level);
+M = FOREACH SIGNATURES GENERATE docname as docname, FLATTEN(createBands(doc_signature)) as (band_signature, band_level);
 O = GROUP M by (band_level, band_signature);
 BUCKETS = FOREACH O GENERATE M.docname as bucket;
 BUCKETS = DISTINCT BUCKETS;
