@@ -1,5 +1,6 @@
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
+import pl.edu.mimuw.students.mw336071.commons.ShingleOutput;
 
 import java.io.*;
 import java.nio.charset.Charset;

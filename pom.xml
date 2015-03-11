@@ -12,6 +12,7 @@
 		<module>shingling</module>
 		<module>minhashing</module>
 		<module>lsh</module>
+		<module>commmons</module>
 	</modules>
 	<dependencies>
 		<dependency>
